@@ -6,16 +6,15 @@
 
 
 
-int main()
+int** generator(int size)
 {
-	setlocale(LC_ALL, "RUS");
-	srand(time(NULL));
+	int** G = new int* [size];
 
-	const int size = 5;
-	int izol, conc, dom, reb = 0;
+	for (int i = 0; i < size; i++)
+	{
+		G[i] = new int [size];
+	}
 
-	//Генератор
-	int G[size][size];
 	for (int i = 0; i < size; i++)
 	{
 		for (int j = 0; j < size; j++)
@@ -39,6 +38,24 @@ int main()
 		}
 	}
 
+	return G;
+}
+
+int main()
+{
+	setlocale(LC_ALL, "RUS");
+	srand(time(NULL));
+
+	int size;
+	int izol, conc, dom, reb = 0;
+
+	printf("Введите размер графа: ");
+	scanf("%d", &size);
+
+	int** G = generator(size);
+
+	//Генератор
+
 	//Вывод
 	printf("Матрица смежности: \n");
 	printf("   ");
@@ -57,8 +74,6 @@ int main()
 		}
 		printf("\n");
 	}
-
-	printf("\nРазмер графа - %d\n", size);
 
 	int cnti = 0, cntc = size, cntd = 0, izolir = 0, domin = 0;
 	for (int i = 0; i < size; i++)
@@ -98,6 +113,7 @@ int main()
 		cntc = 0;
 	}
 
+	printf("\nРазмер графа - %d\n", reb / 2);
 	printf("Изолированных - %d\nКонцевых - %d\nДоминирующих - %d\n", izolir, cntc, domin);
 
 
@@ -106,7 +122,13 @@ int main()
 
 	//printf("\nreb - %d\n", r);
 
-	int I[size][256];
+	int** I = new int* [size];
+
+	for (int i = 0; i < size; i++)
+	{
+		I[i] = new int[64];
+	}
+
 	int C = 0;
 
 	//Заполнение
@@ -148,6 +170,6 @@ int main()
 		printf("\n");
 	}
 
-	printf("\nРазмер графа - %d\n", size);
+	printf("\nРазмер графа - %d\n", r);
 	printf("Изолированных - %d\nКонцевых - %d\nДоминирующих - %d\n", izolir, cntc, domin);
 }
