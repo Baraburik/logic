@@ -3,7 +3,6 @@
 
 // Функция для генерации случайной матрицы смежности
 void generateRandomGraphh(int** graph, int size) {
-    srand(time(0));
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
             if (i == j) {
@@ -140,6 +139,7 @@ void performOperations(int** graph1, int** graph2, int* size1, int* size2) {
 
 int startTaskThreeFour() {
     setlocale(LC_ALL, "RUS");
+    srand(time(0));
 
     int size1, size2;
     printf("Введите размер первого графа: ");
@@ -153,15 +153,16 @@ int startTaskThreeFour() {
         graph1[i] = (int*)malloc(size1 * sizeof(int));
     }
 
-    int** graph2 = (int**)malloc(size1 * sizeof(int*));
-    for (int i = 0; i < size1; i++) {
-        graph2[i] = (int*)malloc(size1 * sizeof(int));
+    int** graph2 = (int**)malloc(size2 * sizeof(int*));
+    for (int i = 0; i < size2; i++) {
+        graph2[i] = (int*)malloc(size2 * sizeof(int));
     }
 
     generateRandomGraphh(graph1, size1);
-    generateRandomGraphh(graph2, size2);
     printf("\nГраф 1:\n");
     printGraphMatrixx(graph1, size1);
+
+    generateRandomGraphh(graph2, size2);
     printf("\nГраф 2:\n");
     printGraphMatrixx(graph2, size2);
 
