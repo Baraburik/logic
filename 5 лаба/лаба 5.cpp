@@ -41,13 +41,124 @@ int** generator(int size)
 	return G;
 }
 
+// Cписок смежности
+int** adjacencyMatrixToList(int** matrix, int size, int** listSizes) {
+	
+	int** adjacencyList = (int**)malloc(size * sizeof(int*));
+	*listSizes = (int*)malloc(size * sizeof(int)); 
+
+	for (int i = 0; i < size; i++) {
+		int count = 0;
+
+		// Считаем количество соседей для текущей вершины
+		for (int j = 0; j < size; j++) {
+			if (matrix[i][j] == 1) {
+				count++;
+			}
+		}
+
+		// Выделяем память для списка соседей
+		adjacencyList[i] = (int*)malloc(count * sizeof(int));
+		(*listSizes)[i] = count;
+
+		// Заполняем список соседей
+		int index = 0;
+		for (int j = 0; j < size; j++) {
+			if (matrix[i][j] == 1) {
+				adjacencyList[i][index++] = j + 1; // Добавляем вершину
+			}
+		}
+	}
+
+	return adjacencyList;
+}
+
+void analyzeVertices(int** matrix, int size) {
+	printf("\nАнализ вершин:\n");
+
+	printf("Изолированные: ");
+	int hasIsolated = 0;
+	int hasDominating = 0;
+	int hasTerminal = 0;
+
+	for (int i = 0; i < size; i++) {
+		int degree = 0;
+		int isDominating = 1;
+
+		for (int j = 0; j < size; j++) {
+			degree += matrix[i][j];
+			if (i != j && matrix[j][i] == 0) {
+				isDominating = 0;
+			}
+		}
+
+		// Изолированная вершина
+		if (degree == 0) {
+			printf("V%d ", i + 1);
+			hasIsolated = 1;
+		}
+
+		// Концевая вершина
+		if (degree == 1) {
+			if (!hasTerminal) {
+				printf("\nКонцевые: ");
+				hasTerminal = 1;
+			}
+			printf("V%d ", i + 1);
+		}
+
+		// Доминирующая вершина
+		if (isDominating) {
+			if (!hasDominating) {
+				printf("\nДоминирующие: ");
+				hasDominating = 1;
+			}
+			printf("V%d ", i + 1);
+		}
+	}
+
+	if (!hasIsolated) {
+		printf("-\n");
+	}
+	else {
+		printf("\n");
+	}
+
+	if (!hasTerminal) {
+		printf("\nКонцевые: -\n");
+	}
+
+	if (!hasDominating) {
+		printf("\nДоминирующие: -\n");
+	}
+}
+
+// Функция для вывода списка смежности
+void printAdjacencyList(int** list, int* listSizes, int size) {
+	for (int i = 0; i < size; i++) {
+		printf("V%d: ", i + 1);
+		for (int j = 0; j < listSizes[i]; j++) {
+			printf("V%d ", list[i][j]);
+		}
+		printf("\n");
+	}
+}
+
+// Очистка памяти
+void freeAdjacencyList(int** list, int* listSizes, int size) {
+	for (int i = 0; i < size; i++) {
+		free(list[i]);
+	}
+	free(list);
+	free(listSizes);
+}
+
 int main()
 {
 	setlocale(LC_ALL, "RUS");
 	srand(time(NULL));
 
 	int size;
-	int izol, conc, dom, reb = 0;
 
 	printf("Введите размер графа: ");
 	scanf("%d", &size);
@@ -75,101 +186,14 @@ int main()
 		printf("\n");
 	}
 
-	int cnti = 0, cntc = size, cntd = 0, izolir = 0, domin = 0;
-	for (int i = 0; i < size; i++)
-	{
-		for (int j = 0; j < size; j++)
-		{
-			reb += G[i][j];
+	int* listSizes; // Массив для хранения размеров каждого списка
+	int** adjacencyList = adjacencyMatrixToList(G, size, &listSizes);
 
-			if (G[i][j])
-			{
-				cntd += 1;
-			}
-			if (!G[i][j] && i != j)
-			{
-				cnti += 1;
-			}
-		}
+	printf("\nСписок смежности:\n");
+	printAdjacencyList(adjacencyList, listSizes, size);
 
-		if (cnti == size - 1)
-		{
-			izolir += 1;
-			cntc -= 1;
-		}
+	analyzeVertices(G, size);
 
-		if (cntd == size - 1)
-		{
-			cntc -= 1;
-			domin += 1;
-		}
-
-		cntd = 0;
-		cnti = 0;
-	}
-
-	if (cntc < 0)
-	{
-		cntc = 0;
-	}
-
-	printf("\nРазмер графа - %d\n", reb / 2);
-	printf("Изолированных - %d\nКонцевых - %d\nДоминирующих - %d\n", izolir, cntc, domin);
-
-
-	//инцидентная
-	const int r = reb / 2;
-
-	//printf("\nreb - %d\n", r);
-
-	int** I = new int* [size];
-
-	for (int i = 0; i < size; i++)
-	{
-		I[i] = new int[64];
-	}
-
-	int C = 0;
-
-	//Заполнение
-	for (int i = 0; i < size; i++)
-	{
-		for (int j = 0; j < r; j++)
-		{
-			I[i][j] = 0;
-		}
-	}
-
-	for (int i = 0; i < size; i++)
-	{
-		for (int j = i + 1; j < size; j++)
-		{
-			if (G[i][j])
-			{
-				I[i][C] = 1;
-				I[j][C++] = 1;
-			}
-		}
-	}
-
-	//Вывод
-	printf("\n\nМатрица инцидентности: \n");
-	printf("   ");
-	for (int i = 0; i < r; i++)
-	{
-		printf("r%d  ", i + 1);
-	}
-	printf("\n");
-	for (int i = 0; i < size; i++)
-	{
-		printf("V%d  ", i + 1);
-		for (int j = 0; j < r; j++)
-		{
-			printf("%d   ", I[i][j]);
-		}
-		printf("\n");
-	}
-
-	printf("\nРазмер графа - %d\n", r);
-	printf("Изолированных - %d\nКонцевых - %d\nДоминирующих - %d\n", izolir, cntc, domin);
+	// Освобождение памяти
+	freeAdjacencyList(adjacencyList, listSizes, size);
 }
