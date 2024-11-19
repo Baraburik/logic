@@ -5,4 +5,4 @@
 #include <time.h>
 #include <locale.h>
 
-int startTaskThreeFour();
+int task34Start();

@@ -1,177 +1,154 @@
-#include "Task34Header.h"
+п»ї#include "Task34Header.h"
 
-
-// Функция для генерации случайной матрицы смежности
-void generateRandomGraphh(int** graph, int size) {
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РіРµРЅРµСЂР°С†РёРё РјР°С‚СЂРёС†С‹ СЃРјРµР¶РЅРѕСЃС‚Рё
+void generateMatrixx(int** matrix, int size) {
     for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
+        for (int j = i; j < size; j++) {
             if (i == j) {
-                graph[i][j] = 0;
+                matrix[i][j] = 0; // Р”РёР°РіРѕРЅР°Р»СЊРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹ СЂР°РІРЅС‹ 0
             }
             else {
-                graph[i][j] = rand() % 2;
-                graph[j][i] = graph[i][j]; // Симметричность для неориентированного графа
+                matrix[i][j] = matrix[j][i] = rand() % 2; // Р—Р°РїРѕР»РЅРµРЅРёРµ СЃР»СѓС‡Р°Р№РЅС‹РјРё 0 Рё 1
             }
         }
     }
 }
 
-// Функция для вывода матрицы смежности
-void printGraphMatrixx(int** graph, int size) {
-    printf("Матрица смежности:\n");
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РІС‹РІРѕРґР° РјР°С‚СЂРёС†С‹
+void printMatrixx(int** matrix, int size) {
     printf("   ");
     for (int i = 0; i < size; i++) {
-        printf("V%d  ", i + 1);
+        printf("V%d  ", i);
     }
     printf("\n");
     for (int i = 0; i < size; i++) {
-        printf("V%d  ", i + 1);
+        printf("V%d  ", i);
         for (int j = 0; j < size; j++) {
-            printf("%d   ", graph[i][j]);
+            printf("%d   ", matrix[i][j]);
         }
         printf("\n");
     }
 }
 
-// Функция объединения графов
-void unionGraphs(int** graph1, int** graph2, int size, int** result) {
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РјР°С‚СЂРёС†С‹ РґРёРЅР°РјРёС‡РµСЃРєРё
+int** createMatrix(int size) {
+    int** matrix = (int**)malloc(size * sizeof(int*));
     for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            result[i][j] = graph1[i][j] || graph2[i][j];
+        matrix[i] = (int*)malloc(size * sizeof(int));
+    }
+    return matrix;
+}
+
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РѕСЃРІРѕР±РѕР¶РґРµРЅРёСЏ РїР°РјСЏС‚Рё
+void freeMatrix(int** matrix, int size) {
+    for (int i = 0; i < size; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
+// РћРїРµСЂР°С†РёСЏ РѕР±СЉРµРґРёРЅРµРЅРёСЏ РјР°С‚СЂРёС†
+void unionMatrix(int** result, int** matrix1, int size1, int** matrix2, int size2) {
+    int minSize = (size1 < size2) ? size1 : size2;
+    for (int i = 0; i < minSize; i++) {
+        for (int j = 0; j < minSize; j++) {
+            result[i][j] = matrix1[i][j] || matrix2[i][j];
         }
     }
 }
 
-// Функция пересечения графов
-void intersectGraphs(int** graph1, int** graph2, int size, int** result) {
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            result[i][j] = graph1[i][j] && graph2[i][j];
+// РћРїРµСЂР°С†РёСЏ РїРµСЂРµСЃРµС‡РµРЅРёСЏ РјР°С‚СЂРёС†
+void intersectionMatrix(int** result, int** matrix1, int size1, int** matrix2, int size2) {
+    int minSize = (size1 < size2) ? size1 : size2;
+    for (int i = 0; i < minSize; i++) {
+        for (int j = 0; j < minSize; j++) {
+            result[i][j] = matrix1[i][j] && matrix2[i][j];
         }
     }
 }
 
-// Функция кольцевой суммы графов
-void ringSumGraphs(int** graph1, int** graph2, int size, int** result) {
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            result[i][j] = graph1[i][j] ^ graph2[i][j];
+// РћРїРµСЂР°С†РёСЏ РєРѕР»СЊС†РµРІРѕР№ СЃСѓРјРјС‹ РјР°С‚СЂРёС†
+void symmetricDifferenceMatrix(int** result, int** matrix1, int size1, int** matrix2, int size2) {
+    int minSize = (size1 < size2) ? size1 : size2;
+    for (int i = 0; i < minSize; i++) {
+        for (int j = 0; j < minSize; j++) {
+            result[i][j] = matrix1[i][j] ^ matrix2[i][j];
         }
     }
 }
 
-// Функция декартова произведения графов
-void cartesianProductGraphs(int** graph1, int size1, int** graph2, int size2, int** result) {
-    int size = size1 * size2;
+// РћРїРµСЂР°С†РёСЏ РґРµРєР°СЂС‚РѕРІР° РїСЂРѕРёР·РІРµРґРµРЅРёСЏ РјР°С‚СЂРёС†
+void cartesianProduct(int** result, int** matrix1, int size1, int** matrix2, int size2) {
     for (int i = 0; i < size1; i++) {
-        for (int j = 0; j < size2; j++) {
-            for (int k = 0; k < size1; k++) {
+        for (int j = 0; j < size1; j++) {
+            for (int k = 0; k < size2; k++) {
                 for (int l = 0; l < size2; l++) {
-                    int index1 = i * size2 + j;
-                    int index2 = k * size2 + l;
-                    result[index1][index2] = (i == k && graph2[j][l]) || (j == l && graph1[i][k]);
+                    result[i * size2 + k][j * size2 + l] = matrix1[i][j] && matrix2[k][l];
                 }
             }
         }
     }
 }
 
-// Функция для выполнения операций над графом
-void performOperations(int** graph1, int** graph2, int* size1, int* size2) {
-    int v1, v2, choice;
-
-    while (1) {
-        printf("\nВыберите операцию:\n");
-        printf("1 - Объединение\n");
-        printf("2 - Пересечение\n");
-        printf("3 - Кольцевая сумма\n");
-        printf("4 - Декартово произведение\n");
-        printf("5 - Выход\n");
-        printf("Введите номер операции: ");
-        scanf("%d", &choice);
-
-        if (choice == 1) {
-            int** result = (int**)malloc(*size1 * sizeof(int*));
-            for (int i = 0; i < *size1; i++) result[i] = (int*)malloc(*size1 * sizeof(int));
-            unionGraphs(graph1, graph2, *size1, result);
-            printf("\nОбъединение графов:\n");
-            printGraphMatrixx(result, *size1);
-            for (int i = 0; i < *size1; i++) free(result[i]);
-            free(result);
-        }
-        else if (choice == 2) {
-            int** result = (int**)malloc(*size1 * sizeof(int*));
-            for (int i = 0; i < *size1; i++) result[i] = (int*)malloc(*size1 * sizeof(int));
-            intersectGraphs(graph1, graph2, *size1, result);
-            printf("\nПересечение графов:\n");
-            printGraphMatrixx(result, *size1);
-            for (int i = 0; i < *size1; i++) free(result[i]);
-            free(result);
-        }
-        else if (choice == 3) {
-            int** result = (int**)malloc(*size1 * sizeof(int*));
-            for (int i = 0; i < *size1; i++) result[i] = (int*)malloc(*size1 * sizeof(int));
-            ringSumGraphs(graph1, graph2, *size1, result);
-            printf("\nКольцевая сумма графов:\n");
-            printGraphMatrixx(result, *size1);
-            for (int i = 0; i < *size1; i++) free(result[i]);
-            free(result);
-        }
-        else if (choice == 4) {
-            int sizeProduct = *size1 * *size2;
-            int** cartesianResult = (int**)malloc(sizeProduct * sizeof(int*));
-            for (int i = 0; i < sizeProduct; i++) cartesianResult[i] = (int*)malloc(sizeProduct * sizeof(int));
-            cartesianProductGraphs(graph1, *size1, graph2, *size2, cartesianResult);
-            printf("\nДекартово произведение графов:\n");
-            printGraphMatrixx(cartesianResult, sizeProduct);
-            for (int i = 0; i < sizeProduct; i++) free(cartesianResult[i]);
-            free(cartesianResult);
-        }
-        else if (choice == 5) {
-            printf("До свидания!\n");
-            break;
-        }
-        else {
-            printf("Ошибка: неверный выбор операции\n");
-        }
-    }
-}
-
-int startTaskThreeFour() {
+int task34Start() {
     setlocale(LC_ALL, "RUS");
     srand(time(0));
 
     int size1, size2;
-    printf("Введите размер первого графа: ");
+
+    // Р’РІРѕРґ СЂР°Р·РјРµСЂРѕРІ РїРµСЂРІРѕР№ РјР°С‚СЂРёС†С‹
+    printf("Р’РІРµРґРёС‚Рµ СЂР°Р·РјРµСЂ РїРµСЂРІРѕР№ РјР°С‚СЂРёС†С‹: ");
     scanf("%d", &size1);
-    printf("Введите размер второго графа: ");
+
+    // Р’РІРѕРґ СЂР°Р·РјРµСЂРѕРІ РІС‚РѕСЂРѕР№ РјР°С‚СЂРёС†С‹
+    printf("Р’РІРµРґРёС‚Рµ СЂР°Р·РјРµСЂ РІС‚РѕСЂРѕР№ РјР°С‚СЂРёС†С‹: ");
     scanf("%d", &size2);
 
-    // Динамическое выделение памяти для матрицы
-    int** graph1 = (int**)malloc(size1 * sizeof(int*));
-    for (int i = 0; i < size1; i++) {
-        graph1[i] = (int*)malloc(size1 * sizeof(int));
-    }
+    // РЎРѕР·РґР°РЅРёРµ РґРёРЅР°РјРёС‡РµСЃРєРёС… РјР°С‚СЂРёС†
+    int** M = createMatrix(size1);
+    int** M1 = createMatrix(size2);
 
-    int** graph2 = (int**)malloc(size2 * sizeof(int*));
-    for (int i = 0; i < size2; i++) {
-        graph2[i] = (int*)malloc(size2 * sizeof(int));
-    }
+    // РЎРѕР·РґР°РЅРёРµ СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёС… РјР°С‚СЂРёС†
+    int minSize = (size1 < size2) ? size1 : size2;
+    int** unionM = createMatrix(minSize);
+    int** intersectionM = createMatrix(minSize);
+    int** symmetricDiffM = createMatrix(minSize);
+    int** cartesianM = createMatrix(size1 * size2);
 
-    generateRandomGraphh(graph1, size1);
-    printf("\nГраф 1:\n");
-    printGraphMatrixx(graph1, size1);
+    // Р“РµРЅРµСЂР°С†РёСЏ РјР°С‚СЂРёС†
+    printf("\nРњР°С‚СЂРёС†Р° M:\n");
+    generateMatrixx(M, size1);
+    printMatrixx(M, size1);
 
-    generateRandomGraphh(graph2, size2);
-    printf("\nГраф 2:\n");
-    printGraphMatrixx(graph2, size2);
+    printf("\nРњР°С‚СЂРёС†Р° M1:\n");
+    generateMatrixx(M1, size2);
+    printMatrixx(M1, size2);
 
-    performOperations(graph1, graph2, &size1, &size2);
+    // РћРїРµСЂР°С†РёРё РЅР°Рґ РјР°С‚СЂРёС†Р°РјРё
+    printf("\nРћР±СЉРµРґРёРЅРµРЅРёРµ:\n");
+    unionMatrix(unionM, M, size1, M1, size2);
+    printMatrixx(unionM, minSize);
 
-    for (int i = 0; i < size1; i++) free(graph1[i]);
-    for (int i = 0; i < size2; i++) free(graph2[i]);
-    free(graph1);
-    free(graph2);
+    printf("\nРџРµСЂРµСЃРµС‡РµРЅРёРµ:\n");
+    intersectionMatrix(intersectionM, M, size1, M1, size2);
+    printMatrixx(intersectionM, minSize);
+
+    printf("\nРљРѕР»СЊС†РµРІР°СЏ СЃСѓРјРјР°:\n");
+    symmetricDifferenceMatrix(symmetricDiffM, M, size1, M1, size2);
+    printMatrixx(symmetricDiffM, minSize);
+
+    printf("\nР”РµРєР°СЂС‚РѕРІРѕ РїСЂРѕРёР·РІРµРґРµРЅРёРµ:\n");
+    cartesianProduct(cartesianM, M, size1, M1, size2);
+    printMatrixx(cartesianM, size1 * size2);
+
+    // РћСЃРІРѕР±РѕР¶РґРµРЅРёРµ РїР°РјСЏС‚Рё
+    freeMatrix(M, size1);
+    freeMatrix(M1, size2);
+    freeMatrix(unionM, minSize);
+    freeMatrix(intersectionM, minSize);
+    freeMatrix(symmetricDiffM, minSize);
+    freeMatrix(cartesianM, size1 * size2);
 
     return 0;
 }
+
