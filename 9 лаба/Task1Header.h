@@ -4,5 +4,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <limits.h>
+#include <iostream>
+#include <queue>
+#include <cstdlib>
+#include <ctime>
 
 int task1Start();

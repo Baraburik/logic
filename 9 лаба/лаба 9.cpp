@@ -22,6 +22,7 @@ int main() {
     }
     else if (choise == 3)
     {
+        printf("\nДо свидания!\n");
         exit;
     }
     else
